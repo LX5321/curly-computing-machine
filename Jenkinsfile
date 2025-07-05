@@ -1,47 +1,37 @@
 pipeline {
-    agent { label 'genesis-agent' }  // Run only on agents with this label
+    agent { label 'genesis-agent' }
 
     stages {
-        stage('Preparation') {
+        stage('Dynamic Parallel Tasks') {
             steps {
-                echo 'Setting up environment...'
-                sh 'echo "Workspace: $WORKSPACE"'
+                script {
+                    // Simulate fetching data from an API
+                    def services = ['auth-service', 'payment-service', 'user-service']
+                    def parallelStages = [:]
+
+                    for (int i = 0; i < services.size(); i++) {
+                        def serviceName = services[i]
+
+                        parallelStages[serviceName] = {
+                            stage("Run for ${serviceName}") {
+                                echo "Processing ${serviceName}"
+                                sh """
+                                    echo "Deploying ${serviceName}"
+                                    sleep 2
+                                """
+                            }
+                        }
+                    }
+
+                    parallel parallelStages
+                }
             }
         }
 
-        stage('Build') {
+        stage('Done') {
             steps {
-                echo 'Running build step...'
-                sh '''
-                    echo "Compiling source code..."
-                    # Simulate build
-                    sleep 2
-                '''
+                echo 'All parallel tasks complete.'
             }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh '''
-                    echo "Running unit tests..."
-                    # Simulate tests
-                    sleep 1
-                '''
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                echo 'Cleaning up...'
-                sh 'rm -rf build/ || true'
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline finished.'
         }
     }
 }
