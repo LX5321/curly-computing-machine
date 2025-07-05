@@ -1,5 +1,5 @@
 pipeline {
-    agent sh  // Use any available agent
+    agent any  // Use any available agent
 
     stages {
         stage('Preparation') {
