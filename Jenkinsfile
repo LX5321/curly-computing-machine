@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Use any available agent
+    agent { label 'genesis-agent' }  // Run only on agents with this label
 
     stages {
         stage('Preparation') {
